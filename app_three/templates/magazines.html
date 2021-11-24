@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magazines</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="wrapper">
+        <a href="/logout">Logout</a>
+        <h1> Welcome, {{ user.first_name }}! </h1>
+        <h2>Add a Favorite Magazine:</h2>
+        <form action="/magazines/create" method="POST">
+            {% csrf_token %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" name="title">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" name="description">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-6 px-2">
+        <h3>Favorite Magazines</h3>
+        {% for magazine in all_magazines %}
+        {% if this_user not in magazine.favorited_by.all %}
+        <div class="container">
+            <h5><a href="/magazines/{{magazine.id}}">{{magazine.title}}</a></h5>
+            <p>(added by {{magazine.creator.first_name}} {{magazine.creator.last_name}})</p>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</body>
+
+</html>

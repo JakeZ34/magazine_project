@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+
+<body>
+    <a href="/logout">Logout</a>
+    <a href="/back">Go Back</a>
+    <h1> Welcome, {{ user.first_name }} </h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-6 px-2">
+                <h3>{{magazine.title}}</h3>
+                <p>Added by: {{magazine.creator.first_name}} {{magazine.creator.last_name}}</p>
+                <p>Added on: {{magazine.created_at}}</p>
+                <p>Last Updated on: {{magazine.updated_at}}</p>
+                {% if magazine.creator.id != request.session.user_id %}
+                <p>Description: {{magazine.description}}</p>
+                {% else %}
+                <form action="/magazines/{{magazine.id}}/update" method="post">
+                    {% csrf_token %}
+                    <label for="title">Title:</label>
+                    <input name='title' class="form-control w-50" placeholder="{{magazine.title}}">
+                    <label for="description">Description:</label>
+                    <input name='description' class="form-control w-50" placeholder="{{magazine.description}}">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/magazines/{{magazine.id}}/delete" role="button" class="btn btn-danger">Delete</a>
+                </form>
+                {% endif %}
+            </div>
+            <div class="col-6 px-2">
+                <h3>Users Who Favorited the Magazine</h3>
+                <ul>
+                    {% for fav in magazine.favorited_by.all %}
+                    <li>{{fav.first_name}} {{fav.last_name}}</li>
+                    {% endfor %}
+                </ul>
+                {% if active_user in magazine.favorited_by.all %}
+                <a href="/unfavorite/{{magazine.id}}" role="button">Remove From Favorites</a>
+                {% else %}
+                <a href="/favorite/{{magazine.id}}" role="button">Add to Favorites</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
